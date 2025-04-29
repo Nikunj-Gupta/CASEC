@@ -1,6 +1,6 @@
 import os
 
-RUNS_DIRECTORY = "runs_seeds/" 
+RUNS_DIRECTORY = "runs_bigtag/" 
 PARTITION = "main"
 
 def write_run_file(content, num): 
@@ -11,12 +11,12 @@ def write_run_file(content, num):
 
 # 1. SLURM header for the single script:
 file = f"""#!/bin/bash
-#SBATCH --account=prasanna_933
+#SBATCH --account=prasanna_1363
 #SBATCH --partition={PARTITION}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=64
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 #SBATCH --time=48:00:00 
 
 module load gcc/13.3.0 git/2.45.2
@@ -32,7 +32,8 @@ echo "Starting parallel job script"
 MAX_SEEDS = 11 
 
 count = 0 
-for seed in range(4, MAX_SEEDS): 
-    cmd = f"""python3 src/main.py --config=casec --env-config=gather with threshold=0.5 t_max=1050000 use_action_repr=False construction_q_var=True q_var_loss=True independent_p_q=True seed={seed} use_cuda=False""" 
+for seed in range(0, MAX_SEEDS): 
+    # cmd = f"""python3 src/main.py --config=casec --env-config=gather with threshold=0.5 t_max=1050000 use_action_repr=False construction_q_var=True q_var_loss=True independent_p_q=True seed={seed} use_cuda=False""" 
+    cmd = f"""python3 src/main.py --config=casec --env-config=gymma with env_args.key="pz-mpe-simple-tag-v3" threshold=0.5 t_max=2050000 use_action_repr=False construction_q_var=True q_var_loss=True independent_p_q=True seed={seed} use_cuda=False""" 
     count+=1
     write_run_file(file+cmd, count) 
