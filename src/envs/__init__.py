@@ -9,11 +9,15 @@ from .sensors import SensorEnv
 from .hallway import HallwayEnv
 from .disperse import DisperseEnv
 from .gather import GatherEnv
+from .gymma import GymmaWrapper
 
 
 def env_fn(env, **kwargs) -> MultiAgentEnv:
     return env(**kwargs)
 
+def gymma_fn(**kwargs) -> MultiAgentEnv:
+    assert "common_reward" in kwargs and "reward_scalarisation" in kwargs
+    return GymmaWrapper(**kwargs)
 
 REGISTRY = {}
 REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
@@ -23,7 +27,7 @@ REGISTRY["sensor"] = partial(env_fn, env=SensorEnv)
 REGISTRY["hallway"] = partial(env_fn, env=HallwayEnv)
 REGISTRY["disperse"] = partial(env_fn, env=DisperseEnv)
 REGISTRY["gather"] = partial(env_fn, env=GatherEnv)
-
+REGISTRY["gymma"] = gymma_fn 
 
 if sys.platform == "linux":
     os.environ.setdefault("SC2PATH",
